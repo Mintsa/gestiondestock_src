@@ -2,10 +2,16 @@ package com.bouali.gestiondestock.controller.api;
 
 import static com.bouali.gestiondestock.utils.Constants.APP_ROOT;
 
+import com.bouali.gestiondestock.dto.ArticleDto;
 import com.bouali.gestiondestock.dto.MvtStkDto;
 import io.swagger.annotations.Api;
 import java.math.BigDecimal;
 import java.util.List;
+
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,5 +37,8 @@ public interface MvtStkApi {
 
   @PostMapping(APP_ROOT + "/mvtstk/correctionneg")
   MvtStkDto correctionStockNeg(@RequestBody MvtStkDto dto);
+
+
+
 
 }

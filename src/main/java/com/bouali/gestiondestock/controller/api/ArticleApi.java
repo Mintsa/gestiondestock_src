@@ -73,4 +73,12 @@ public interface ArticleApi {
   })
   void delete(@PathVariable("idArticle") Integer id);
 
+  @GetMapping(value = APP_ROOT + "/articles/mvtstk/all", produces = MediaType.APPLICATION_JSON_VALUE)
+  @ApiOperation(value = "Renvoi la liste des articles ayant un mvtstock", notes = "Cette methode permet de chercher et renvoyer la liste des articles qui sont rattachés à un mvt de stock. "
+          + "dans la BDD", responseContainer = "List<ArticleDto>")
+  @ApiResponses(value = {
+          @ApiResponse(code = 200, message = "La liste des article / Une liste vide")
+  })
+  List<ArticleDto> findAllArticleWithMvtStock();
+
 }

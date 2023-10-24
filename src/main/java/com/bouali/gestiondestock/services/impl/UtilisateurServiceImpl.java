@@ -114,6 +114,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
     Utilisateur utilisateur = utilisateurOptional.get();
     utilisateur.setMoteDePasse(passwordEncoder.encode(dto.getMotDePasse()));
+    utilisateur.setPrenom(dto.getPrenom());
 
     return UtilisateurDto.fromEntity(
         utilisateurRepository.save(utilisateur)

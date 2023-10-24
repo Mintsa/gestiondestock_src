@@ -1,34 +1,20 @@
 package com.bouali.gestiondestock.services.impl;
 
-import com.bouali.gestiondestock.dto.ArticleDto;
-import com.bouali.gestiondestock.dto.ClientDto;
-import com.bouali.gestiondestock.dto.CommandeClientDto;
-import com.bouali.gestiondestock.dto.LigneCommandeClientDto;
-import com.bouali.gestiondestock.dto.MvtStkDto;
+import com.bouali.gestiondestock.dto.*;
 import com.bouali.gestiondestock.exception.EntityNotFoundException;
 import com.bouali.gestiondestock.exception.ErrorCodes;
 import com.bouali.gestiondestock.exception.InvalidEntityException;
 import com.bouali.gestiondestock.exception.InvalidOperationException;
-import com.bouali.gestiondestock.model.Article;
-import com.bouali.gestiondestock.model.Client;
-import com.bouali.gestiondestock.model.CommandeClient;
-import com.bouali.gestiondestock.model.EtatCommande;
-import com.bouali.gestiondestock.model.LigneCommandeClient;
-import com.bouali.gestiondestock.model.SourceMvtStk;
-import com.bouali.gestiondestock.model.TypeMvtStk;
-import com.bouali.gestiondestock.repository.ArticleRepository;
-import com.bouali.gestiondestock.repository.ClientRepository;
-import com.bouali.gestiondestock.repository.CommandeClientRepository;
-import com.bouali.gestiondestock.repository.LigneCommandeClientRepository;
+import com.bouali.gestiondestock.model.*;
+import com.bouali.gestiondestock.repository.*;
 import com.bouali.gestiondestock.services.CommandeClientService;
 import com.bouali.gestiondestock.services.MvtStkService;
+import com.bouali.gestiondestock.services.VentesService;
 import com.bouali.gestiondestock.validator.ArticleValidator;
 import com.bouali.gestiondestock.validator.CommandeClientValidator;
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,17 +30,25 @@ public class CommandeClientServiceImpl implements CommandeClientService {
   private ClientRepository clientRepository;
   private ArticleRepository articleRepository;
   private MvtStkService mvtStkService;
+  private VentesService ventesService;
+
+  private LigneVenteRepository ligneVenteRepository;
 
   @Autowired
-  public CommandeClientServiceImpl(CommandeClientRepository commandeClientRepository,
-      ClientRepository clientRepository, ArticleRepository articleRepository, LigneCommandeClientRepository ligneCommandeClientRepository,
-      MvtStkService mvtStkService) {
+  public CommandeClientServiceImpl(CommandeClientRepository commandeClientRepository
+          , ClientRepository clientRepository
+          , ArticleRepository articleRepository
+          , LigneCommandeClientRepository ligneCommandeClientRepository
+           ,VentesService ventesService
+          ,MvtStkService mvtStkService) {
     this.commandeClientRepository = commandeClientRepository;
     this.ligneCommandeClientRepository = ligneCommandeClientRepository;
     this.clientRepository = clientRepository;
     this.articleRepository = articleRepository;
     this.mvtStkService = mvtStkService;
+    this.ventesService = ventesService;
   }
+
 
   @Override
   public CommandeClientDto save(CommandeClientDto dto) {
@@ -98,10 +92,22 @@ public class CommandeClientServiceImpl implements CommandeClientService {
     }
     dto.setDateCommande(Instant.now());
     CommandeClient savedCmdClt = commandeClientRepository.save(CommandeClientDto.toEntity(dto));
+    List<LigneVenteDto> ligneVentesDto = new ArrayList<>();
 
     if (dto.getLigneCommandeClients() != null) {
       dto.getLigneCommandeClients().forEach(ligCmdClt -> {
         LigneCommandeClient ligneCommandeClient = LigneCommandeClientDto.toEntity(ligCmdClt);
+
+        LigneVenteDto ligneVenteDto =  LigneVenteDto.builder()
+                .prixUnitaire(ligneCommandeClient.getPrixUnitaire())
+                .quantite(ligneCommandeClient.getQuantite())
+                .article(ligCmdClt.getArticle())
+                .idEntreprise(dto.getIdEntreprise())
+                .build();
+        ligneVentesDto.add(ligneVenteDto);
+
+
+
         ligneCommandeClient.setCommandeClient(savedCmdClt);
         ligneCommandeClient.setIdEntreprise(dto.getIdEntreprise());
         LigneCommandeClient savedLigneCmd = ligneCommandeClientRepository.save(ligneCommandeClient);
@@ -110,8 +116,20 @@ public class CommandeClientServiceImpl implements CommandeClientService {
       });
     }
 
+
+    VentesDto ventesDto = VentesDto.builder()
+                          .code(UUID.randomUUID().toString())
+                          .dateVente(Instant.now())
+                          .commentaire("Vente Web")
+                          .ligneVentes(ligneVentesDto).idEntreprise(dto.getIdEntreprise())
+                          .build();
+    this.ventesService.save(ventesDto);
+
+
+
     return CommandeClientDto.fromEntity(savedCmdClt);
   }
+
 
   @Override
   public CommandeClientDto findById(Integer id) {

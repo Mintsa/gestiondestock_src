@@ -1,5 +1,6 @@
 package com.bouali.gestiondestock.repository;
 
+import com.bouali.gestiondestock.dto.ArticleDto;
 import com.bouali.gestiondestock.model.MvtStk;
 import java.math.BigDecimal;
 import java.util.List;
@@ -13,5 +14,6 @@ public interface MvtStkRepository extends JpaRepository<MvtStk, Integer> {
   BigDecimal stockReelArticle(@Param("idArticle") Integer idArticle);
 
   List<MvtStk> findAllByArticleId(Integer idArticle);
+
 
 }

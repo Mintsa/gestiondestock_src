@@ -20,9 +20,9 @@ public class CommandeFournisseurValidator {
     if (!StringUtils.hasLength(dto.getCode())) {
       errors.add("Veuillez renseigner le code de la commande");
     }
-    if (dto.getDateCommande() == null) {
+   /* if (dto.getDateCommande() == null) {
       errors.add("Veuillez renseigner la date de la commande");
-    }
+    }*/
     if (!StringUtils.hasLength(dto.getEtatCommande().toString())) {
       errors.add("Veuillez renseigner l'etat de la commande");
     }

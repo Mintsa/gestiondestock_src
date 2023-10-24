@@ -76,7 +76,7 @@ public class VentesServiceImpl implements VentesService {
       LigneVente ligneVente = LigneVenteDto.toEntity(ligneVenteDto);
       ligneVente.setVente(savedVentes);
       ligneVenteRepository.save(ligneVente);
-      updateMvtStk(ligneVente);
+     // updateMvtStk(ligneVente);
     });
 
     return VentesDto.fromEntity(savedVentes);

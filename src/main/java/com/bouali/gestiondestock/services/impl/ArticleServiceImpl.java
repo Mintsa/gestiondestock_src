@@ -8,6 +8,7 @@ import com.bouali.gestiondestock.exception.EntityNotFoundException;
 import com.bouali.gestiondestock.exception.ErrorCodes;
 import com.bouali.gestiondestock.exception.InvalidEntityException;
 import com.bouali.gestiondestock.exception.InvalidOperationException;
+import com.bouali.gestiondestock.model.Article;
 import com.bouali.gestiondestock.model.LigneCommandeClient;
 import com.bouali.gestiondestock.model.LigneCommandeFournisseur;
 import com.bouali.gestiondestock.model.LigneVente;
@@ -17,7 +18,10 @@ import com.bouali.gestiondestock.repository.LigneCommandeFournisseurRepository;
 import com.bouali.gestiondestock.repository.LigneVenteRepository;
 import com.bouali.gestiondestock.services.ArticleService;
 import com.bouali.gestiondestock.validator.ArticleValidator;
+
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -146,4 +150,14 @@ public class ArticleServiceImpl implements ArticleService {
     }
     articleRepository.deleteById(id);
   }
+
+  @Override
+  public List<ArticleDto> findAllArticleWithMvtStock() {
+    Set<Article> articleSet = new HashSet<>();
+    articleRepository.findAllArticleWithMvtStock().forEach(articleSet::add);
+    return articleSet.stream()
+            .map(ArticleDto::fromEntity)
+            .collect(Collectors.toList());
+  }
+
 }

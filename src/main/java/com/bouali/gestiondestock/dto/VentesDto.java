@@ -40,8 +40,9 @@ public class VentesDto {
     }
     Ventes ventes = new Ventes();
     ventes.setId(dto.getId());
-    ventes.setCode(ventes.getCode());
+    ventes.setCode(dto.getCode());
     ventes.setCommentaire(dto.getCommentaire());
+    ventes.setDateVente(dto.getDateVente());
     ventes.setIdEntreprise(dto.getIdEntreprise());
     return ventes;
   }

@@ -25,5 +25,6 @@ public interface ArticleService {
   List<ArticleDto> findAllArticleByIdCategory(Integer idCategory);
 
   void delete(Integer id);
+  List<ArticleDto> findAllArticleWithMvtStock();
 
 }

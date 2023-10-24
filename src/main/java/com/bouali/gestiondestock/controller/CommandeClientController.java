@@ -6,11 +6,15 @@ import com.bouali.gestiondestock.dto.LigneCommandeClientDto;
 import com.bouali.gestiondestock.model.EtatCommande;
 import com.bouali.gestiondestock.services.CommandeClientService;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
-
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 public class CommandeClientController implements CommandeClientApi {
 
